@@ -2,60 +2,50 @@ const $ = id => document.getElementById(id);
 const cellSpans = {};
 
 function buildGrid() {
-    const cols = Math.max(1, parseInt($('cols').value) || 1);
-    const rows = Math.max(1, parseInt($('rows').value) || 1);
-    const gap = parseInt($('gap').value) || 0;
-    const colSize = $('colSize').value || '1fr';
-    const rowSize = $('rowSize').value || 'auto';
-
+    const cols = Math.max(1, parseInt($('cols').value, 10) || 1);
+    const rows = Math.max(1, parseInt($('rows').value, 10) || 1);
     const preview = $('preview');
-    preview.style.gridTemplateColumns = `repeat(${cols}, ${colSize})`;
-    preview.style.gridTemplateRows = `repeat(${rows}, ${rowSize})`;
-    preview.style.gap = gap + 'px';
+
     preview.style.gridAutoFlow = 'dense';
 
-    preview.innerHTML = '';
-
     const occupied = new Set();
-    let cellIdCounter = 1;
-    let visualCellCount = 0;
+    let cellCounter = 1;
+    let visualNumber = 1;
+
+    preview.innerHTML = '';
+    const layers = document.querySelectorAll('.parallax-layer');
+    layers.forEach(l => preview.appendChild(l));
 
     for (let r = 1; r <= rows; r++) {
         for (let c = 1; c <= cols; c++) {
-            const posKey = `${r}-${c}`;
-            if (occupied.has(posKey)) continue;
+            const pos = `${r}-${c}`;
+            if (occupied.has(pos)) continue; // <--- นี่คือจุดที่ทำให้กล่องที่โดนทับ "หายไป"
 
-            visualCellCount++;
             const d = document.createElement('div');
             d.className = 'cell';
-            d.textContent = visualCellCount;
+            d.textContent = visualNumber++;
 
-            // Check if this ID has merge settings
-            const s = cellSpans[cellIdCounter];
+            const s = cellSpans[cellCounter];
             if (s) {
-                const spanC = Math.min(s.c, cols - c + 1);
-                const spanR = Math.min(s.r, rows - r + 1);
+                const actualSpanC = Math.min(s.c, cols - c + 1);
+                const actualSpanR = Math.min(s.r, rows - r + 1);
+                if (actualSpanC > 1) d.style.gridColumn = `span ${actualSpanC}`;
+                if (actualSpanR > 1) d.style.gridRow = `span ${actualSpanR}`;
 
-                if (spanC > 1) d.style.gridColumn = `span ${spanC}`;
-                if (spanR > 1) d.style.gridRow = `span ${spanR}`;
-                d.classList.add('selected');
-
-                // Mark slots as occupied
-                for (let i = 0; i < spanR; i++) {
-                    for (let j = 0; j < spanC; j++) {
+                for (let i = 0; i < actualSpanR; i++) {
+                    for (let j = 0; j < actualSpanC; j++) {
                         if (i === 0 && j === 0) continue;
                         occupied.add(`${r + i}-${c + j}`);
                     }
                 }
             }
-
-            const currentId = cellIdCounter;
-            d.onclick = () => openModal(currentId);
+            const currentId = cellCounter;
+            d.onclick = () => openModalForCell(currentId);
             preview.appendChild(d);
-            cellIdCounter++;
+            cellCounter++;
         }
     }
-    updateOutputs(cols, rows, gap, colSize, rowSize, visualCellCount);
+    updateOutputs();
 }
 
 function updateOutputs(cols, rows, gap, colSize, rowSize, total) {
