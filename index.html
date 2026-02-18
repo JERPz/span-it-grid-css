@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Span-it! | CSS Grid Generator</title>
+    <title>Span-it! | Grid Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,7 +12,7 @@
     <main class="app">
         <header>
             <h1>Span-it!</h1>
-            <p class="subtitle">Interactive Grid Merger & Generator</p>
+            <p class="subtitle">Interactive Grid Merger (2x2 Merge = 1 Box)</p>
         </header>
 
         <section class="controls">
@@ -24,18 +24,13 @@
                 <label>Row Size <input id="rowSize" type="text" value="auto"></label>
             </div>
             <div class="actions">
-                <button id="generate" class="primary">Update Grid</button>
-                <button id="resetBtn">Reset All Spans</button>
+                <button id="resetBtn">Reset All</button>
             </div>
         </section>
-
-        <p class="hint">💡 <strong>How to Merge:</strong> Click a cell to set span. If you span 2x2, the overlapping 3
-            cells will be removed.</p>
 
         <section class="preview-wrap">
             <div class="preview-container" id="parallaxBox">
                 <div class="parallax-layer layer-1"></div>
-                <div class="parallax-layer layer-2"></div>
                 <div id="preview" class="preview"></div>
             </div>
         </section>
@@ -43,15 +38,15 @@
         <div class="code-grid">
             <div class="code-block">
                 <div class="block-header">
-                    <h2>Generated CSS</h2>
+                    <h2>CSS Output</h2>
                     <button id="copyBtn" class="small">Copy CSS</button>
                 </div>
                 <textarea id="output" readonly rows="10"></textarea>
             </div>
             <div class="code-block">
                 <div class="block-header">
-                    <h2>HTML Result</h2>
-                    <button id="copyHtmlBtn" class="small">Copy HTML</button>
+                    <h2>Live HTML Result</h2>
+                    <button id="copyHtmlBtn" class="small">Copy Full HTML</button>
                 </div>
                 <div class="iframe-container">
                     <iframe id="htmlFrame"></iframe>
@@ -64,8 +59,8 @@
         <div class="modal-dialog">
             <h3>Merge Settings</h3>
             <form id="modalForm">
-                <label>Width (Columns) <input id="modalCol" type="number" min="1"></label>
-                <label>Height (Rows) <input id="modalRow" type="number" min="1"></label>
+                <label>Span Columns <input id="modalCol" type="number" min="1" value="1"></label>
+                <label>Span Rows <input id="modalRow" type="number" min="1" value="1"></label>
                 <div class="modal-btns">
                     <button type="button" id="modalCancel">Cancel</button>
                     <button type="submit" class="primary">Apply Merge</button>
